@@ -73,9 +73,195 @@ export default function Technology() {
     if (!section) return;
 
     const ctx = gsap.context(() => {
-      /* --------------------------------
+      const isMobile = window.matchMedia(
+        "(max-width: 767px)"
+      ).matches;
+
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+
+      /* =====================================================
+         REDUCED MOTION
+      ===================================================== */
+
+      if (prefersReducedMotion) {
+        gsap.set(
+          [
+            ".technology-eyebrow",
+            ".technology-heading",
+            ".technology-intro",
+            ".technology-visual",
+            ".technology-row",
+          ],
+          {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+          }
+        );
+
+        gsap.set(".battery-cell", {
+          opacity: 0.65,
+          scale: 1,
+        });
+
+        return;
+      }
+
+      /* =====================================================
+         MOBILE
+         
+         IMPORTANT:
+         No infinite animations.
+         No scrub.
+         No parallax.
+         No battery pulse.
+         No SVG energy animation.
+      ===================================================== */
+
+      if (isMobile) {
+        /* -----------------------------------------------
+           INITIAL STATES
+        ------------------------------------------------ */
+
+        gsap.set(".technology-eyebrow", {
+          opacity: 0,
+          y: 15,
+        });
+
+        gsap.set(".technology-heading", {
+          opacity: 0,
+          y: 25,
+        });
+
+        gsap.set(".technology-intro", {
+          opacity: 0,
+          y: 15,
+        });
+
+        gsap.set(".technology-visual", {
+          opacity: 0,
+          y: 25,
+          scale: 0.97,
+        });
+
+        gsap.set(".technology-row", {
+          opacity: 0,
+          y: 15,
+        });
+
+        gsap.set(".battery-cell", {
+          opacity: 0.35,
+          scale: 0.95,
+        });
+
+        /* -----------------------------------------------
+           HEADER ANIMATION
+        ------------------------------------------------ */
+
+        const mobileIntro = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top 88%",
+            once: true,
+          },
+        });
+
+        mobileIntro
+          .to(".technology-eyebrow", {
+            opacity: 1,
+            y: 0,
+            duration: 0.35,
+            ease: "power2.out",
+          })
+          .to(
+            ".technology-heading",
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.55,
+              ease: "power2.out",
+            },
+            "-=0.12"
+          )
+          .to(
+            ".technology-intro",
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.4,
+              ease: "power2.out",
+            },
+            "-=0.2"
+          );
+
+        /* -----------------------------------------------
+           BATTERY VISUAL
+        ------------------------------------------------ */
+
+        const mobileVisual = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".technology-visual",
+            start: "top 90%",
+            once: true,
+          },
+        });
+
+        mobileVisual
+          .to(".technology-visual", {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            ease: "power2.out",
+          })
+          .to(
+            ".battery-cell",
+            {
+              opacity: 0.65,
+              scale: 1,
+              duration: 0.3,
+              stagger: 0.008,
+              ease: "power1.out",
+            },
+            "-=0.25"
+          );
+
+        /* -----------------------------------------------
+           TECHNOLOGY ROWS
+        ------------------------------------------------ */
+
+        gsap.to(".technology-row", {
+          opacity: 1,
+          y: 0,
+          duration: 0.45,
+          stagger: 0.07,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".technology-list",
+            start: "top 90%",
+            once: true,
+          },
+        });
+
+        /*
+          IMPORTANT:
+          Nothing runs continuously on mobile.
+        */
+
+        return;
+      }
+
+      /* =====================================================
+         DESKTOP
+         Full animation
+      ===================================================== */
+
+      /* -----------------------------------------------
          INITIAL STATES
-      -------------------------------- */
+      ------------------------------------------------ */
 
       gsap.set(".technology-eyebrow", {
         opacity: 0,
@@ -108,9 +294,9 @@ export default function Technology() {
         scale: 0.85,
       });
 
-      /* --------------------------------
+      /* -----------------------------------------------
          TEXT INTRO
-      -------------------------------- */
+      ------------------------------------------------ */
 
       const intro = gsap.timeline({
         scrollTrigger: {
@@ -148,9 +334,9 @@ export default function Technology() {
           "-=0.45"
         );
 
-      /* --------------------------------
+      /* -----------------------------------------------
          BATTERY VISUAL INTRO
-      -------------------------------- */
+      ------------------------------------------------ */
 
       const visualIntro = gsap.timeline({
         scrollTrigger: {
@@ -183,9 +369,9 @@ export default function Technology() {
           "-=0.65"
         );
 
-      /* --------------------------------
+      /* -----------------------------------------------
          TECHNOLOGY ROWS
-      -------------------------------- */
+      ------------------------------------------------ */
 
       gsap.to(".technology-row", {
         opacity: 1,
@@ -200,9 +386,9 @@ export default function Technology() {
         },
       });
 
-      /* --------------------------------
-         BATTERY FLOAT
-      -------------------------------- */
+      /* -----------------------------------------------
+         DESKTOP BATTERY FLOAT
+      ------------------------------------------------ */
 
       gsap.to(batteryRef.current, {
         y: -10,
@@ -212,9 +398,9 @@ export default function Technology() {
         ease: "sine.inOut",
       });
 
-      /* --------------------------------
-         ENERGY FLOW
-      -------------------------------- */
+      /* -----------------------------------------------
+         DESKTOP ENERGY FLOW
+      ------------------------------------------------ */
 
       if (energyRef.current) {
         gsap.fromTo(
@@ -231,9 +417,9 @@ export default function Technology() {
         );
       }
 
-      /* --------------------------------
-         BATTERY CELL PULSE
-      -------------------------------- */
+      /* -----------------------------------------------
+         DESKTOP CELL PULSE
+      ------------------------------------------------ */
 
       gsap.to(".battery-cell", {
         opacity: 0.95,
@@ -247,9 +433,9 @@ export default function Technology() {
         ease: "sine.inOut",
       });
 
-      /* --------------------------------
-         SCROLL PARALLAX
-      -------------------------------- */
+      /* -----------------------------------------------
+         DESKTOP PARALLAX
+      ------------------------------------------------ */
 
       gsap.to(visualRef.current, {
         y: -50,
@@ -268,17 +454,41 @@ export default function Technology() {
     };
   }, []);
 
-  /* --------------------------------
+  /* =====================================================
      CHANGE TECHNOLOGY
-  -------------------------------- */
+  ===================================================== */
 
   const changeTechnology = (index) => {
     if (index === active) return;
 
     setActive(index);
 
+    const isMobile = window.matchMedia(
+      "(max-width: 767px)"
+    ).matches;
+
     const cells = cellsRef.current.filter(Boolean);
 
+    // Mobile: very small one-time animation
+    if (isMobile) {
+      gsap.fromTo(
+        cells,
+        {
+          scale: 0.96,
+        },
+        {
+          scale: 1,
+          duration: 0.25,
+          stagger: 0.006,
+          ease: "power1.out",
+          overwrite: true,
+        }
+      );
+
+      return;
+    }
+
+    // Desktop
     gsap.fromTo(
       cells,
       {
@@ -294,6 +504,7 @@ export default function Technology() {
           from: index % 2 === 0 ? "start" : "end",
         },
         ease: "power2.out",
+        overwrite: true,
       }
     );
   };
@@ -302,14 +513,35 @@ export default function Technology() {
     <section
       id="technology"
       ref={sectionRef}
-      className="relative overflow-hidden bg-[#080808] px-5 py-10 text-white sm:px-8 md:px-12 md:py-20 lg:px-16"
+      className="
+        relative
+        overflow-hidden
+        bg-[#080808]
+        px-5
+        py-10
+        text-white
+        sm:px-8
+        md:px-12
+        md:py-20
+        lg:px-16
+      "
     >
       {/* ==================================================
-          REPEATED BACKGROUND IMAGE
+          BACKGROUND IMAGE
+          Desktop only
       ================================================== */}
 
       <div
-        className="pointer-events-none absolute inset-0 bg-center bg-no-repeat opacity-10"
+        className="
+          pointer-events-none
+          absolute
+          inset-0
+          hidden
+          bg-center
+          bg-no-repeat
+          opacity-10
+          md:block
+        "
         style={{
           backgroundImage:
             "url(https://i.pinimg.com/474x/57/44/96/574496770fd4202b80212674b8731d15.jpg)",
@@ -323,12 +555,6 @@ export default function Technology() {
       ================================================== */}
 
       <div className="pointer-events-none absolute inset-0 bg-[#080808]/60" />
-
-      {/* ==================================================
-          TECHNICAL GRID
-      ================================================== */}
-
-     
 
       {/* ==================================================
           MAIN CONTENT
@@ -348,7 +574,19 @@ export default function Technology() {
             </span>
           </div>
 
-          <h2 className="technology-heading mt-7 text-[15vw] font-black leading-[0.75] tracking-[-0.11em] sm:text-[11vw] md:text-[8rem] lg:text-[9.5rem]">
+          <h2
+            className="
+              technology-heading
+              mt-7
+              text-[15vw]
+              font-black
+              leading-[0.75]
+              tracking-[-0.11em]
+              sm:text-[11vw]
+              md:text-[8rem]
+              lg:text-[9.5rem]
+            "
+          >
             ENERGY
             <br />
 
@@ -357,7 +595,18 @@ export default function Technology() {
             </span>
           </h2>
 
-          <div className="technology-intro mt-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div
+            className="
+              technology-intro
+              mt-10
+              flex
+              flex-col
+              gap-6
+              md:flex-row
+              md:items-end
+              md:justify-between
+            "
+          >
             <p className="max-w-lg text-sm leading-7 text-white/40 md:text-base">
               Intelligent battery architecture designed
               around performance, control and longevity.
@@ -377,21 +626,56 @@ export default function Technology() {
             MAIN TECHNOLOGY AREA
         ================================================== */}
 
-        <div className="mt-20 grid gap-16 lg:grid-cols-[0.95fr_1.05fr] lg:gap-24">
+        <div
+          className="
+            mt-20
+            grid
+            gap-16
+            lg:grid-cols-[0.95fr_1.05fr]
+            lg:gap-24
+          "
+        >
           {/* ==================================================
               LEFT BATTERY VISUAL
           ================================================== */}
 
           <div
             ref={visualRef}
-            className="relative lg:sticky lg:top-24 lg:h-[650px]"
+            className="
+              relative
+              lg:sticky
+              lg:top-24
+              lg:h-[650px]
+            "
           >
-            <div className="technology-visual relative h-full min-h-[500px]">
-              {/* Outer frame */}
+            <div
+              className="
+                technology-visual
+                relative
+                h-full
+                min-h-[500px]
+              "
+            >
+              {/* ==================================================
+                  OUTER FRAME
+                  No backdrop blur on mobile
+              ================================================== */}
 
-              <div className="absolute inset-0 rounded-[2rem] border border-white/[0.08] bg-white/[0.015] backdrop-blur-[1px]" />
+              <div
+                className="
+                  absolute
+                  inset-0
+                  rounded-[2rem]
+                  border
+                  border-white/[0.08]
+                  bg-white/[0.015]
+                  md:backdrop-blur-[1px]
+                "
+              />
 
-              {/* Technical corners */}
+              {/* ==================================================
+                  TECHNICAL CORNERS
+              ================================================== */}
 
               <span className="absolute left-5 top-5 h-7 w-7 border-l border-t border-[#baff35]/40" />
 
@@ -401,7 +685,9 @@ export default function Technology() {
 
               <span className="absolute bottom-5 right-5 h-7 w-7 border-b border-r border-[#baff35]/40" />
 
-              {/* Top information */}
+              {/* ==================================================
+                  TOP INFORMATION
+              ================================================== */}
 
               <div className="absolute left-8 right-8 top-8 flex items-start justify-between">
                 <div>
@@ -427,23 +713,97 @@ export default function Technology() {
 
               <div
                 ref={batteryRef}
-                className="absolute left-1/2 top-1/2 w-[68%] max-w-[370px] -translate-x-1/2 -translate-y-1/2"
+                className="
+                  absolute
+                  left-1/2
+                  top-1/2
+                  w-[68%]
+                  max-w-[370px]
+                  -translate-x-1/2
+                  -translate-y-1/2
+                "
               >
-                {/* Ground shadow */}
+                {/* Ground shadow
+                    Mobile: removed
+                */}
 
-                <div className="absolute left-1/2 top-[100%] h-10 w-[70%] -translate-x-1/2 rounded-full bg-black/70 blur-2xl" />
+                <div
+                  className="
+                    absolute
+                    left-1/2
+                    top-[100%]
+                    hidden
+                    h-10
+                    w-[70%]
+                    -translate-x-1/2
+                    rounded-full
+                    bg-black/70
+                    blur-2xl
+                    md:block
+                  "
+                />
 
-                {/* Battery casing */}
+                {/* ==================================================
+                    BATTERY CASING
+                ================================================== */}
 
-                <div className="relative aspect-[0.7] rounded-[2.5rem] border border-white/15 bg-gradient-to-br from-zinc-700 via-zinc-950 to-black p-3 shadow-[0_30px_100px_rgba(0,0,0,.7)]">
-                  <div className="relative h-full overflow-hidden rounded-[2rem] border border-[#baff35]/15 bg-black">
-                    {/* Battery glow */}
+                <div
+                  className="
+                    relative
+                    aspect-[0.7]
+                    rounded-[2.5rem]
+                    border
+                    border-white/15
+                    bg-zinc-950
+                    p-3
+                    md:bg-gradient-to-br
+                    md:from-zinc-700
+                    md:via-zinc-950
+                    md:to-black
+                    md:shadow-[0_30px_100px_rgba(0,0,0,.7)]
+                  "
+                >
+                  <div
+                    className="
+                      relative
+                      h-full
+                      overflow-hidden
+                      rounded-[2rem]
+                      border
+                      border-[#baff35]/15
+                      bg-black
+                    "
+                  >
+                    {/* ==================================================
+                        BATTERY GLOW
+                        Desktop only
+                    ================================================== */}
 
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(186,255,53,.10),transparent_50%)]" />
+                    <div
+                      className="
+                        pointer-events-none
+                        absolute
+                        inset-0
+                        hidden
+                        bg-[radial-gradient(circle_at_50%_50%,rgba(186,255,53,.10),transparent_50%)]
+                        md:block
+                      "
+                    />
 
-                    {/* Battery cells */}
+                    {/* ==================================================
+                        BATTERY CELLS
+                    ================================================== */}
 
-                    <div className="absolute inset-[13%] grid grid-cols-4 gap-2 sm:gap-3">
+                    <div
+                      className="
+                        absolute
+                        inset-[13%]
+                        grid
+                        grid-cols-4
+                        gap-2
+                        sm:gap-3
+                      "
+                    >
                       {Array.from({ length: 32 }).map(
                         (_, index) => (
                           <span
@@ -452,16 +812,39 @@ export default function Technology() {
                               cellsRef.current[index] =
                                 el;
                             }}
-                            className="battery-cell rounded-[5px] border border-[#baff35]/10 bg-gradient-to-b from-[#baff35]/20 to-white/[0.02] shadow-[inset_0_0_10px_rgba(186,255,53,.06)]"
+                            className="
+                              battery-cell
+                              rounded-[5px]
+                              border
+                              border-[#baff35]/10
+                              bg-[#baff35]/[0.08]
+                              md:bg-gradient-to-b
+                              md:from-[#baff35]/20
+                              md:to-white/[0.02]
+                              md:shadow-[inset_0_0_10px_rgba(186,255,53,.06)]
+                            "
                           />
                         )
                       )}
                     </div>
 
-                    {/* Core */}
+                    {/* ==================================================
+                        CORE
+                    ================================================== */}
 
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <div className="grid h-14 w-14 place-items-center rounded-full border border-[#baff35]/25 bg-[#baff35]/[0.06]">
+                      <div
+                        className="
+                          grid
+                          h-14
+                          w-14
+                          place-items-center
+                          rounded-full
+                          border
+                          border-[#baff35]/25
+                          bg-[#baff35]/[0.06]
+                        "
+                      >
                         <Battery
                           size={22}
                           strokeWidth={1}
@@ -478,10 +861,21 @@ export default function Technology() {
                       </span>
                     </div>
 
-                    {/* Energy flow */}
+                    {/* ==================================================
+                        ENERGY FLOW
+                        Desktop animation only
+                    ================================================== */}
 
                     <svg
-                      className="pointer-events-none absolute inset-0 h-full w-full"
+                      className="
+                        pointer-events-none
+                        absolute
+                        inset-0
+                        hidden
+                        h-full
+                        w-full
+                        md:block
+                      "
                       viewBox="0 0 100 140"
                       fill="none"
                     >
@@ -503,7 +897,9 @@ export default function Technology() {
                     </svg>
                   </div>
 
-                  {/* Battery terminal */}
+                  {/* ==================================================
+                      BATTERY TERMINAL
+                  ================================================== */}
 
                   <div className="absolute left-1/2 top-[-10px] h-5 w-20 -translate-x-1/2 rounded-t-lg border border-white/10 bg-zinc-700" />
                 </div>
@@ -531,7 +927,15 @@ export default function Technology() {
                   </p>
 
                   <div className="mt-2 flex items-center justify-end gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#baff35] shadow-[0_0_10px_#baff35]" />
+                    <span
+                      className="
+                        h-1.5
+                        w-1.5
+                        rounded-full
+                        bg-[#baff35]
+                        md:shadow-[0_0_10px_#baff35]
+                      "
+                    />
 
                     <span className="font-mono text-[9px] text-white/50">
                       OPTIMAL
@@ -564,31 +968,62 @@ export default function Technology() {
                   onClick={() =>
                     changeTechnology(index)
                   }
-                  className={`technology-row group relative w-full border-b border-white/10 py-8 text-left transition-all duration-500 md:py-10 ${
-                    isActive
-                      ? "bg-white/[0.025]"
-                      : ""
-                  }`}
+                  className={`
+                    technology-row
+                    group
+                    relative
+                    w-full
+                    border-b
+                    border-white/10
+                    py-8
+                    text-left
+                    transition-colors
+                    duration-300
+                    md:py-10
+                    ${
+                      isActive
+                        ? "bg-white/[0.025]"
+                        : ""
+                    }
+                  `}
                 >
                   {/* Active indicator */}
 
                   <span
-                    className={`absolute bottom-0 left-0 top-0 w-[2px] origin-top bg-[#baff35] transition-transform duration-500 ${
-                      isActive
-                        ? "scale-y-100"
-                        : "scale-y-0"
-                    }`}
+                    className={`
+                      absolute
+                      bottom-0
+                      left-0
+                      top-0
+                      w-[2px]
+                      origin-top
+                      bg-[#baff35]
+                      transition-transform
+                      duration-500
+                      ${
+                        isActive
+                          ? "scale-y-100"
+                          : "scale-y-0"
+                      }
+                    `}
                   />
 
                   <div className="flex items-start gap-5 pl-5 md:gap-7 md:pl-7">
                     {/* Number */}
 
                     <span
-                      className={`pt-1 font-mono text-[10px] transition-colors duration-300 ${
-                        isActive
-                          ? "text-[#baff35]"
-                          : "text-white/20"
-                      }`}
+                      className={`
+                        pt-1
+                        font-mono
+                        text-[10px]
+                        transition-colors
+                        duration-300
+                        ${
+                          isActive
+                            ? "text-[#baff35]"
+                            : "text-white/20"
+                        }
+                      `}
                     >
                       {item.no}
                     </span>
@@ -601,11 +1036,22 @@ export default function Technology() {
                           {/* Icon */}
 
                           <div
-                            className={`grid h-10 w-10 shrink-0 place-items-center rounded-full border transition-all duration-500 ${
-                              isActive
-                                ? "border-[#baff35]/40 bg-[#baff35]/10 text-[#baff35]"
-                                : "border-white/10 text-white/20"
-                            }`}
+                            className={`
+                              grid
+                              h-10
+                              w-10
+                              shrink-0
+                              place-items-center
+                              rounded-full
+                              border
+                              transition-colors
+                              duration-300
+                              ${
+                                isActive
+                                  ? "border-[#baff35]/40 bg-[#baff35]/10 text-[#baff35]"
+                                  : "border-white/10 text-white/20"
+                              }
+                            `}
                           >
                             <Icon
                               size={16}
@@ -617,11 +1063,19 @@ export default function Technology() {
                             {/* Label */}
 
                             <p
-                              className={`text-[9px] font-bold uppercase tracking-[0.18em] transition-colors duration-300 ${
-                                isActive
-                                  ? "text-[#baff35]"
-                                  : "text-white/20"
-                              }`}
+                              className={`
+                                text-[9px]
+                                font-bold
+                                uppercase
+                                tracking-[0.18em]
+                                transition-colors
+                                duration-300
+                                ${
+                                  isActive
+                                    ? "text-[#baff35]"
+                                    : "text-white/20"
+                                }
+                              `}
                             >
                               {item.label}
                             </p>
@@ -629,11 +1083,21 @@ export default function Technology() {
                             {/* Title */}
 
                             <h3
-                              className={`mt-1 text-xl font-black tracking-[-0.04em] transition-colors duration-300 sm:text-2xl md:text-3xl ${
-                                isActive
-                                  ? "text-white"
-                                  : "text-white/45"
-                              }`}
+                              className={`
+                                mt-1
+                                text-xl
+                                font-black
+                                tracking-[-0.04em]
+                                transition-colors
+                                duration-300
+                                sm:text-2xl
+                                md:text-3xl
+                                ${
+                                  isActive
+                                    ? "text-white"
+                                    : "text-white/45"
+                                }
+                              `}
                             >
                               {item.title}
                             </h3>
@@ -644,11 +1108,18 @@ export default function Technology() {
 
                         <div className="hidden text-right sm:block">
                           <div
-                            className={`font-mono text-lg font-bold transition-colors duration-300 ${
-                              isActive
-                                ? "text-[#baff35]"
-                                : "text-white/20"
-                            }`}
+                            className={`
+                              font-mono
+                              text-lg
+                              font-bold
+                              transition-colors
+                              duration-300
+                              ${
+                                isActive
+                                  ? "text-[#baff35]"
+                                  : "text-white/20"
+                              }
+                            `}
                           >
                             {item.value}
                           </div>
@@ -659,14 +1130,21 @@ export default function Technology() {
                         </div>
                       </div>
 
-                      {/* Expandable content */}
+                      {/* ==================================================
+                          DESCRIPTION
+                      ================================================== */}
 
                       <div
-                        className={`grid transition-[grid-template-rows] duration-500 ${
-                          isActive
-                            ? "grid-rows-[1fr]"
-                            : "grid-rows-[0fr]"
-                        }`}
+                        className={`
+                          grid
+                          transition-[grid-template-rows]
+                          duration-500
+                          ${
+                            isActive
+                              ? "grid-rows-[1fr]"
+                              : "grid-rows-[0fr]"
+                          }
+                        `}
                       >
                         <div className="overflow-hidden">
                           <p className="mt-5 max-w-lg text-sm leading-6 text-white/40">
